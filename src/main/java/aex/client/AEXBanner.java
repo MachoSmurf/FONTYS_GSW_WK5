@@ -2,12 +2,15 @@ package aex.client;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class AEXBanner extends Application {
 
@@ -21,9 +24,19 @@ public class AEXBanner extends Application {
     private double textPosition;
     private BannerController controller;
     private AnimationTimer animationTimer;
+    private String koersText;
 
     @Override
     public void start(Stage primaryStage) {
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent e) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+
 
         controller = new BannerController(this);
 
@@ -50,8 +63,16 @@ public class AEXBanner extends Application {
             public void handle(long now) {
                 long lag = now - prevUpdate;
                 if (lag >= NANO_TICKS) {
+                    if (koersText != null){
+                        setKoersen(koersText);
+                    }
                     // calculate new location of text
                     // TODO
+                    textPosition = textPosition - 5;
+                    if(textPosition < 0 - textLength){
+                        textPosition = scene.getWidth();
+                    }
+
                     text.relocate(textPosition,0);
                     prevUpdate = now;
                 }
@@ -71,6 +92,10 @@ public class AEXBanner extends Application {
     public void setKoersen(String koersen) {
         text.setText(koersen);
         textLength = text.getLayoutBounds().getWidth();
+    }
+
+    public void setKoersText(String koersText){
+        this.koersText = koersText;
     }
 
     @Override

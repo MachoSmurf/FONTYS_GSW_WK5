@@ -1,7 +1,11 @@
 package aex.client;
 
-public interface IFonds {
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
-    String getNaam();
-    double getKoers();
+public interface IFonds extends Remote{
+
+    String getNaam() throws RemoteException;
+    double getKoers() throws RemoteException;
+    void updateKoers() throws RemoteException;
 }

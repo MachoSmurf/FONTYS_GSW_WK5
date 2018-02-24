@@ -3,6 +3,8 @@ package aex.server;
 import aex.client.IFonds;
 import com.sun.javafx.collections.ImmutableObservableList;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -11,7 +13,7 @@ import java.util.TimerTask;
 public class MockEffectenBeurs implements IEffectenBeurs {
 
     private Timer koersenTimer;
-    List<Fonds> fondsen;
+    List<IFonds> fondsen;
 
     public MockEffectenBeurs(){
         koersenTimer = new Timer();
@@ -33,7 +35,7 @@ public class MockEffectenBeurs implements IEffectenBeurs {
     @Override
     public List<IFonds> getKoersen() {
         try{
-            return new <IFonds>ImmutableObservableList(fondsen);
+            return fondsen;
         }
         catch (Exception e){
             System.out.println("Could not return fondsen due to casting error");
@@ -42,8 +44,12 @@ public class MockEffectenBeurs implements IEffectenBeurs {
     }
 
     private void updateKoersen(){
-        for(Fonds f : fondsen){
-            f.updateKoers();
+        for(IFonds f : fondsen){
+            try{
+                f.updateKoers();
+            }catch (RemoteException rmiException){
+                System.out.println("Error updating koers: " + rmiException);
+            }
         }
     }
 }

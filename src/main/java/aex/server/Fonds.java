@@ -16,14 +16,15 @@ public class Fonds implements IFonds {
 
     @Override
     public String getNaam() {
-        return null;
+        return this.naam;
     }
 
     @Override
     public double getKoers() {
-        return 0;
+        return this.koers;
     }
 
+    @Override
     public void updateKoers(){
         double rangeMin = -0.5;
         double rangeMax = 0.5;
