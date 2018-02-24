@@ -56,7 +56,7 @@ public class BannerController {
                 String bannerText = "";
                 DecimalFormat df = new DecimalFormat("##.00");
                 for (IFonds f : fondsen) {
-                    bannerText = bannerText + f.getNaam() + ": " + df.format(f.getKoers());
+                    bannerText = bannerText + f.getNaam() + ": " + df.format(f.getKoers()) + " - ";
                 }
                 banner.setKoersText(bannerText);
             } catch (RemoteException rmiException) {

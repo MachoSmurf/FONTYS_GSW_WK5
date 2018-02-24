@@ -26,13 +26,15 @@ public class Fonds implements IFonds {
 
     @Override
     public void updateKoers(){
-        double rangeMin = -0.5;
-        double rangeMax = 0.5;
+        //berekend een nieuwe mock-koers
+        //max fluctuatie is 0.5%
+        double rangeMin = -0.005;
+        double rangeMax = 0.005;
 
         Random rand = new Random();
         double upDown = rangeMin + (rangeMax - rangeMin) * rand.nextDouble();
         //calculates total percentage value
-        double multiplier = 100 + upDown;
+        double multiplier = 1.0 + upDown;
         this.koers = koers * multiplier;
     }
 }
