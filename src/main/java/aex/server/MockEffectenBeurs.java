@@ -1,21 +1,21 @@
 package aex.server;
 
 import aex.client.IFonds;
-import com.sun.javafx.collections.ImmutableObservableList;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MockEffectenBeurs implements IEffectenBeurs {
+public class MockEffectenBeurs extends UnicastRemoteObject implements IEffectenBeurs {
 
     private Timer koersenTimer;
     List<IFonds> fondsen;
 
-    public MockEffectenBeurs(){
+    public MockEffectenBeurs() throws RemoteException {
+        super();
         koersenTimer = new Timer();
         koersenTimer.schedule(new TimerTask() {
             @Override

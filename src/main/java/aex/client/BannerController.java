@@ -6,6 +6,8 @@ import aex.server.MockEffectenBeurs;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Timer;
@@ -17,11 +19,20 @@ public class BannerController {
     private IEffectenBeurs effectenbeurs;
     private Timer pollingTimer;
     private List<IFonds> fondsen;
+    private Registry registry;
 
     public BannerController(AEXBanner banner) {
 
         this.banner = banner;
-        this.effectenbeurs = new MockEffectenBeurs();
+        //disable this for embedded effectenbeurs
+        startRMIClient();
+        //enable this for embedded effectenbeurs
+        /*try {
+            this.effectenbeurs = new MockEffectenBeurs();
+        } catch (RemoteException e) {
+            System.out.println("RMI Exception");
+            e.printStackTrace();
+        }*/
 
         // Start polling timer: update banner every two seconds
         pollingTimer = new Timer();
@@ -35,7 +46,11 @@ public class BannerController {
     }
 
     private void updateBanner() {
-        this.fondsen = effectenbeurs.getKoersen();
+        try {
+            this.fondsen = effectenbeurs.getKoersen();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         if (fondsen != null) {
             try {
                 String bannerText = "";
@@ -59,5 +74,20 @@ public class BannerController {
         // Stop simulation timer of effectenbeurs
         // TODO
         banner.stop();
+    }
+
+    private void startRMIClient(){
+        try{
+            this.registry = LocateRegistry.getRegistry("localhost", 1099);
+
+            if (registry != null){
+                for (String s : registry.list()){
+                    System.out.println(s);
+                }
+                effectenbeurs = (IEffectenBeurs) registry.lookup("AEXServer");
+            }
+        }catch (Exception e){
+            System.out.println("Failed RMI: " + e);
+        }
     }
 }
