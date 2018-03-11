@@ -11,6 +11,7 @@ import java.util.Enumeration;
 public class Server {
 
     Thread beursThread;
+    Thread listenThread;
 
     public static void main(String[] args) {
         printIPAddresses();
@@ -20,6 +21,9 @@ public class Server {
     public Server(){
         beursThread = new Thread(new MockEffectenBeurs());
         beursThread.start();
+
+        listenThread = new Thread(new SocketListner(5555));
+        listenThread.start();
     }
 
     // Print IP addresses and network interfaces
@@ -54,6 +58,4 @@ public class Server {
             System.out.println("Server: UnknownHostException: " + ex.getMessage());
         }
     }
-
-
 }
