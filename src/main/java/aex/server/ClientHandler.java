@@ -67,12 +67,14 @@ public class ClientHandler implements Runnable {
                 break;
                 //List fondsen
             case "#LST#":
+                sendFondsInfo();
                 break;
             //GET
             case "#GET#":
                 String tmpStr = inString.substring(6, inString.length() - 1);
                 if (tmpStr.length() == 0){
                     //return all
+                    sendFondsInfo();
                 }
                 else{
                     String[] fondsenToSend = tmpStr.split(",");

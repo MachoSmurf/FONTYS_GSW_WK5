@@ -27,7 +27,7 @@ public class AEXBanner extends Application {
     private String koersText;
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws Exception {
 
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
