@@ -1,7 +1,5 @@
-package aex.server;
+package aex.common;
 
-
-import aex.client.IFonds;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

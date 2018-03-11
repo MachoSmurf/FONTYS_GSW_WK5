@@ -1,6 +1,6 @@
 package aex.server;
 
-import aex.client.IFonds;
+import aex.common.*;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

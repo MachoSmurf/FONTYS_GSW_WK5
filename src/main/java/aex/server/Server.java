@@ -1,5 +1,6 @@
 package aex.server;
 
+import aex.common.*;
 import javax.management.remote.rmi.RMIServer;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -24,7 +25,7 @@ public class Server {
 
     public Server(){
         try {
-            effectenBeurs = new MockEffectenBeurs();
+            effectenBeurs = (IEffectenBeurs) new MockEffectenBeurs();
             System.out.println("Effectenbeurs gemaakt");
         } catch (RemoteException e) {
             e.printStackTrace();

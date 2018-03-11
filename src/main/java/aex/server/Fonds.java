@@ -1,6 +1,6 @@
 package aex.server;
 
-import aex.client.IFonds;
+import aex.common.IFonds;
 
 import java.util.Random;
 
