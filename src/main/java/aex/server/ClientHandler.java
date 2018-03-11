@@ -1,5 +1,6 @@
 package aex.server;
 
+import aex.common.IEffectenBeurs;
 import aex.common.IFonds;
 
 import java.io.BufferedReader;
@@ -14,8 +15,10 @@ public class ClientHandler extends Thread implements Runnable {
     private boolean running = true;
     private BufferedReader input;
     private PrintWriter output;
+    private IEffectenBeurs effectenBeurs;
 
-    public ClientHandler(Socket socket) {
+    public ClientHandler(Socket socket, IEffectenBeurs effectenBeurs) {
+        this.effectenBeurs = effectenBeurs;
         this.socket = socket;
 
         try {
@@ -41,12 +44,13 @@ public class ClientHandler extends Thread implements Runnable {
     @Override
     public void run() {
         System.out.println("Clienthandler started");
-        while ((running) && (socket.isConnected())) {
+        while (((running) && (socket.isConnected()))) {
             try {
                 String inString = input.readLine();
                 parseCommand(inString);
             } catch (Exception e) {
                 System.out.println("Error: " + e);
+                running = false;
             }
 
             try {
@@ -57,7 +61,7 @@ public class ClientHandler extends Thread implements Runnable {
         }
         try {
             if (socket.isConnected()){
-                output.write("#CLS#");
+                output.write("#CLS#" + System.getProperty("line.separator"));
                 output.flush();
                 output.close();
                 input.close();
@@ -96,21 +100,23 @@ public class ClientHandler extends Thread implements Runnable {
 
     private void sendFondsInfo(){
         //fetch all fondsen and send them via the overloaded function
-        List<IFonds> fondsen = MockEffectenBeurs.getFondsen();
-        String[] tmp = new String[MockEffectenBeurs.getFondsen().size()];
+        List<IFonds> fondsen = effectenBeurs.getKoersen();
+        String[] tmp = new String[effectenBeurs.getKoersen().size()];
         for(int i=0; i<fondsen.size()-1; i++){
-            tmp[i] = MockEffectenBeurs.getFondsen().get(i).getNaam();
+            tmp[i] = effectenBeurs.getKoersen().get(i).getNaam();
         }
         sendFondsInfo(tmp);
     }
 
     private void sendFondsInfo(String[] fondsIds){
-        List<IFonds> fondsenList = MockEffectenBeurs.getFondsen();
+        List<IFonds> fondsenList = effectenBeurs.getKoersen();
         for(String s : fondsIds){
             for (IFonds fonds : fondsenList){
                 if (s == fonds.getNaam())
                 {
-                    output.write("#FND#" + fonds.getNaam() + ":" + fonds.getKoers() + System.getProperty("line.separator"));
+                    String message = "#FND#" + fonds.getNaam() + "," + fonds.getKoers() + System.getProperty("line.separator");
+                    System.out.println(message);
+                    output.write(message);
                     output.flush();
                 }
             }

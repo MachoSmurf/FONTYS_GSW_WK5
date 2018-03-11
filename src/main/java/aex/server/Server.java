@@ -12,6 +12,7 @@ public class Server {
 
     Thread beursThread;
     Thread listenThread;
+    private IEffectenBeurs effectenBeurs;
 
     public static void main(String[] args) {
         //printIPAddresses();
@@ -19,10 +20,11 @@ public class Server {
     }
 
     public Server(){
-        beursThread = new Thread(new MockEffectenBeurs());
+        this.effectenBeurs = new MockEffectenBeurs();
+        beursThread = new Thread((MockEffectenBeurs)effectenBeurs);
         beursThread.start();
 
-        listenThread = new Thread(new SocketListner(5555));
+        listenThread = new Thread(new SocketListner(5555, effectenBeurs));
         listenThread.start();
     }
 

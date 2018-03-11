@@ -9,23 +9,16 @@ public class MockEffectenBeurs implements IEffectenBeurs, Runnable {
 
     private Timer koersenTimer;
     private List<IFonds> fondsen;
-    private static List<IFonds> fondsenStatic;
 
     public MockEffectenBeurs(){
         super();
 
         fondsen = new ArrayList<>();
-        fondsenStatic = new ArrayList<>();
-        fondsenStatic = fondsen;
 
         fondsen.add(new Fonds("Heineken", 50.00));
         fondsen.add(new Fonds("AHOLD", 29.33));
         fondsen.add(new Fonds("Unilever", 91.98));
         fondsen.add(new Fonds("Sheel", 7.81));
-    }
-
-    public static List<IFonds> getFondsen(){
-        return Collections.unmodifiableList(fondsenStatic);
     }
 
     @Override
@@ -45,13 +38,11 @@ public class MockEffectenBeurs implements IEffectenBeurs, Runnable {
                 if(f instanceof Fonds){
                     Fonds fonds = (Fonds)f;
                     fonds.updateKoers();
-                    //System.out.println(f.getNaam() + ": " + f.getKoers());
                 }
             }catch (Exception e){
                 System.out.println("Error updating koers: " + e);
             }
         }
-        fondsenStatic = fondsen;
     }
 
     /**

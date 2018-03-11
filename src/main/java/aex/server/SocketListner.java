@@ -1,5 +1,6 @@
 package aex.server;
 
+import aex.common.IEffectenBeurs;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.io.IOException;
@@ -11,11 +12,13 @@ import java.util.List;
 public class SocketListner implements Runnable{
 
     private final int port;
+    private final IEffectenBeurs effectenBeurs;
     public boolean serverrunning = true;
     private List<Thread> threadPool;
     private List<ClientHandler> handlers;
 
-    public SocketListner(int port){
+    public SocketListner(int port, IEffectenBeurs effectenBeurs){
+        this.effectenBeurs = effectenBeurs;
         this.port = port;
         threadPool = new ArrayList<>();
 
@@ -57,7 +60,7 @@ public class SocketListner implements Runnable{
             while (serverrunning){
                 System.out.println("Started listening for clients...");
                 Socket s = listener.accept();
-                ClientHandler ch = new ClientHandler(s);
+                ClientHandler ch = new ClientHandler(s, effectenBeurs);
                 handlers.add(ch);
                 Thread clientThread = new Thread(ch);
                 clientThread.start();
