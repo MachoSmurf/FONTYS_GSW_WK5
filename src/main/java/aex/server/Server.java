@@ -1,20 +1,16 @@
 package aex.server;
 
 import aex.common.*;
-import javax.management.remote.rmi.RMIServer;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Enumeration;
 
 public class Server {
-    private static final int rmiRegistryPort = 1099;
-    private static final String bindingName = "AEXServer";
 
+    Thread beursThread;
     private IEffectenBeurs effectenBeurs;
     private Registry registry;
 
@@ -24,25 +20,7 @@ public class Server {
     }
 
     public Server(){
-        try {
-            effectenBeurs = (IEffectenBeurs) new MockEffectenBeurs();
-            System.out.println("Effectenbeurs gemaakt");
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
 
-        try {
-            registry = LocateRegistry.createRegistry(rmiRegistryPort);
-            System.out.println("Registry gemaakt");
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            registry.rebind(bindingName, effectenBeurs);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
     }
 
     // Print IP addresses and network interfaces

@@ -24,8 +24,7 @@ public class Fonds implements IFonds {
         return this.koers;
     }
 
-    @Override
-    public void updateKoers(){
+    void updateKoers(){
         //berekend een nieuwe mock-koers
         //max fluctuatie is 0.5%
         double rangeMin = -0.005;

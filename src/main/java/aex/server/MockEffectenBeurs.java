@@ -2,19 +2,17 @@ package aex.server;
 
 import aex.common.*;
 
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MockEffectenBeurs extends UnicastRemoteObject implements IEffectenBeurs {
+public class MockEffectenBeurs implements IEffectenBeurs {
 
     private Timer koersenTimer;
     List<IFonds> fondsen;
 
-    public MockEffectenBeurs() throws RemoteException {
+    public MockEffectenBeurs(){
         super();
         koersenTimer = new Timer();
         koersenTimer.schedule(new TimerTask() {
@@ -46,9 +44,12 @@ public class MockEffectenBeurs extends UnicastRemoteObject implements IEffectenB
     private void updateKoersen(){
         for(IFonds f : fondsen){
             try{
-                f.updateKoers();
-            }catch (RemoteException rmiException){
-                System.out.println("Error updating koers: " + rmiException);
+                if(f instanceof Fonds){
+                    Fonds fonds = (Fonds)f;
+                    fonds.updateKoers();
+                }
+            }catch (Exception e){
+                System.out.println("Error updating koers: " + e);
             }
         }
     }
