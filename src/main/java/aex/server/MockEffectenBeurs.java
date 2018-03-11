@@ -45,7 +45,7 @@ public class MockEffectenBeurs implements IEffectenBeurs, Runnable {
                 if(f instanceof Fonds){
                     Fonds fonds = (Fonds)f;
                     fonds.updateKoers();
-                    System.out.println(f.getNaam() + ": " + f.getKoers());
+                    //System.out.println(f.getNaam() + ": " + f.getKoers());
                 }
             }catch (Exception e){
                 System.out.println("Error updating koers: " + e);

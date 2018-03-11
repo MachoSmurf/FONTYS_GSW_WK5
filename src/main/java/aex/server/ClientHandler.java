@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
 
-public class ClientHandler implements Runnable {
+public class ClientHandler extends Thread implements Runnable {
 
     private final Socket socket;
     private boolean running = true;
@@ -40,19 +40,28 @@ public class ClientHandler implements Runnable {
      */
     @Override
     public void run() {
-        while (running) {
+        System.out.println("Clienthandler started");
+        while ((running) && (socket.isConnected())) {
             try {
                 String inString = input.readLine();
                 parseCommand(inString);
             } catch (Exception e) {
                 System.out.println("Error: " + e);
             }
+
+            try {
+                sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         try {
-            output.write("#CLS#");
-            output.flush();
-            output.close();
-            input.close();
+            if (socket.isConnected()){
+                output.write("#CLS#");
+                output.flush();
+                output.close();
+                input.close();
+            }
         } catch (Exception e) {
             System.out.println("Error closing: " + e);
         }
@@ -60,6 +69,7 @@ public class ClientHandler implements Runnable {
 
     private void parseCommand(String inString) {
         String command = inString.substring(0, 5);
+        System.out.println("Received command: " + inString);
         switch (command) {
             //Close
             case "#CLS#":
@@ -71,7 +81,7 @@ public class ClientHandler implements Runnable {
                 break;
             //GET
             case "#GET#":
-                String tmpStr = inString.substring(6, inString.length() - 1);
+                String tmpStr = inString.substring(5, inString.length());
                 if (tmpStr.length() == 0){
                     //return all
                     sendFondsInfo();
@@ -86,8 +96,9 @@ public class ClientHandler implements Runnable {
 
     private void sendFondsInfo(){
         //fetch all fondsen and send them via the overloaded function
-        String[] tmp = new String[MockEffectenBeurs.getFondsen().size()-1];
-        for(int i=0; i<MockEffectenBeurs.getFondsen().size()-1; i++){
+        List<IFonds> fondsen = MockEffectenBeurs.getFondsen();
+        String[] tmp = new String[MockEffectenBeurs.getFondsen().size()];
+        for(int i=0; i<fondsen.size()-1; i++){
             tmp[i] = MockEffectenBeurs.getFondsen().get(i).getNaam();
         }
         sendFondsInfo(tmp);
@@ -97,7 +108,11 @@ public class ClientHandler implements Runnable {
         List<IFonds> fondsenList = MockEffectenBeurs.getFondsen();
         for(String s : fondsIds){
             for (IFonds fonds : fondsenList){
-                output.write("#FND#" + fonds.getNaam() + ":" + fonds.getKoers() );
+                if (s == fonds.getNaam())
+                {
+                    output.write("#FND#" + fonds.getNaam() + ":" + fonds.getKoers() + System.getProperty("line.separator"));
+                    output.flush();
+                }
             }
         }
     }

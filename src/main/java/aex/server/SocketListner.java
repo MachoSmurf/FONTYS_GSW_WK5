@@ -18,6 +18,9 @@ public class SocketListner implements Runnable{
     public SocketListner(int port){
         this.port = port;
         threadPool = new ArrayList<>();
+
+        threadPool = new ArrayList<>();
+        handlers = new ArrayList<>();
     }
 
     /**
@@ -52,11 +55,16 @@ public class SocketListner implements Runnable{
         ServerSocket listener = new ServerSocket(port);
         try{
             while (serverrunning){
-                ClientHandler ch = new ClientHandler(listener.accept());
+                System.out.println("Started listening for clients...");
+                Socket s = listener.accept();
+                ClientHandler ch = new ClientHandler(s);
                 handlers.add(ch);
                 Thread clientThread = new Thread(ch);
                 clientThread.start();
             }
+        }
+        catch (Exception e){
+            System.out.println(e);
         }
         finally {
             listener.close();

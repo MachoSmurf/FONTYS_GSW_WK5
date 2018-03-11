@@ -3,6 +3,7 @@ package aex.client;
 import aex.common.IFonds;
 import aex.server.Fonds;
 
+import javax.sound.midi.SysexMessage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -57,7 +58,7 @@ public class ConnectionManager implements Runnable {
                 maintainConnection = false;
                 break;
             case "#FND#":
-                String fondsData = inString.substring(6, inString.length() - 1);
+                String fondsData = inString.substring(5, inString.length());
                 try{
                     IFonds f = new Fonds(fondsData.split(",")[0], Double.parseDouble(fondsData.split(",")[1]));
                     bannerController.updateFonds(f);
@@ -92,7 +93,7 @@ public class ConnectionManager implements Runnable {
 
     public void listFondsen() {
         try {
-            String message = "#LST#";
+            String message = "#LST#" + System.getProperty("line.separator");
             sendCommand(message);
         } catch (Exception e) {
             System.out.println(e);
@@ -101,7 +102,7 @@ public class ConnectionManager implements Runnable {
 
     public void getAllFondsen() {
         try {
-            String message = "#GET#";
+            String message = "#GET#" + System.getProperty("line.separator");
             sendCommand(message);
         } catch (Exception e) {
             System.out.println(e);
@@ -114,6 +115,7 @@ public class ConnectionManager implements Runnable {
             for (String s : fondsNamen) {
                 message = message + "," + s;
             }
+            message = message + System.getProperty("line.separator");
             sendCommand(message);
         } catch (Exception e) {
             System.out.println(e);

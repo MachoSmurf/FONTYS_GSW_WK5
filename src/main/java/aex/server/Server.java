@@ -14,7 +14,7 @@ public class Server {
     Thread listenThread;
 
     public static void main(String[] args) {
-        printIPAddresses();
+        //printIPAddresses();
         new Server();
     }
 
