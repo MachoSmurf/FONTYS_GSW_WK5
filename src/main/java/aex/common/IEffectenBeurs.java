@@ -1,10 +1,7 @@
 package aex.common;
 
-
-import java.rmi.Remote;
-import java.rmi.RemoteException;
 import java.util.List;
 
-public interface IEffectenBeurs extends Remote{
-    List<IFonds> getKoersen() throws RemoteException;
+public interface IEffectenBeurs{
+    List<IFonds> getKoersen();
 }

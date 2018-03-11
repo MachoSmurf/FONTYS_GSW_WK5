@@ -1,26 +1,18 @@
 package aex.server;
 
 import aex.common.*;
+import java.util.Collections;
+import javafx.collections.ObservableList;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
-public class MockEffectenBeurs implements IEffectenBeurs {
+public class MockEffectenBeurs implements IEffectenBeurs, Runnable {
 
     private Timer koersenTimer;
-    List<IFonds> fondsen;
+    static List<IFonds> fondsen;
 
     public MockEffectenBeurs(){
         super();
-        koersenTimer = new Timer();
-        koersenTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                updateKoersen();
-            }
-        }, 0, 2000);
 
         fondsen = new ArrayList<>();
 
@@ -33,7 +25,7 @@ public class MockEffectenBeurs implements IEffectenBeurs {
     @Override
     public List<IFonds> getKoersen() {
         try{
-            return fondsen;
+            return Collections.unmodifiableList(fondsen);
         }
         catch (Exception e){
             System.out.println("Could not return fondsen due to casting error");
@@ -47,10 +39,33 @@ public class MockEffectenBeurs implements IEffectenBeurs {
                 if(f instanceof Fonds){
                     Fonds fonds = (Fonds)f;
                     fonds.updateKoers();
+                    System.out.println(f.getNaam() + ": " + f.getKoers());
                 }
             }catch (Exception e){
                 System.out.println("Error updating koers: " + e);
             }
         }
+    }
+
+    /**
+     * When an object implementing interface <code>Runnable</code> is used
+     * to create a thread, starting the thread causes the object's
+     * <code>run</code> method to be called in that separately executing
+     * thread.
+     * <p>
+     * The general contract of the method <code>run</code> is that it may
+     * take any action whatsoever.
+     *
+     * @see Thread#run()
+     */
+    @Override
+    public void run() {
+        koersenTimer = new Timer();
+        koersenTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                updateKoersen();
+            }
+        }, 0, 2000);
     }
 }

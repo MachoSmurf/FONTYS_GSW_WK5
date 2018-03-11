@@ -11,8 +11,6 @@ import java.util.Enumeration;
 public class Server {
 
     Thread beursThread;
-    private IEffectenBeurs effectenBeurs;
-    private Registry registry;
 
     public static void main(String[] args) {
         printIPAddresses();
@@ -20,7 +18,8 @@ public class Server {
     }
 
     public Server(){
-
+        beursThread = new Thread(new MockEffectenBeurs());
+        beursThread.start();
     }
 
     // Print IP addresses and network interfaces
