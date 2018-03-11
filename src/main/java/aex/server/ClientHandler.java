@@ -81,7 +81,7 @@ public class ClientHandler extends Thread implements Runnable {
                 break;
                 //List fondsen
             case "#LST#":
-                sendFondsInfo();
+                sendFondsList();
                 break;
             //GET
             case "#GET#":
@@ -91,11 +91,26 @@ public class ClientHandler extends Thread implements Runnable {
                     sendFondsInfo();
                 }
                 else{
+                    if (tmpStr.charAt(tmpStr.length()-1) == ','){
+                        tmpStr = tmpStr.substring(0, tmpStr.length()-1);
+                    }
                     String[] fondsenToSend = tmpStr.split(",");
                     sendFondsInfo(fondsenToSend);
                 }
                 break;
         }
+    }
+
+    private void sendFondsList(){
+        List<IFonds> fondsen = effectenBeurs.getKoersen();
+        String[] tmp = new String[effectenBeurs.getKoersen().size()];
+        String message = "#IDX#";
+        for(int i=0; i<fondsen.size(); i++){
+            message = message + effectenBeurs.getKoersen().get(i).getNaam() + ",";
+        }
+        message = message + System.getProperty("line.separator");
+        output.write(message);
+        output.flush();
     }
 
     private void sendFondsInfo(){
@@ -112,7 +127,7 @@ public class ClientHandler extends Thread implements Runnable {
         List<IFonds> fondsenList = effectenBeurs.getKoersen();
         for(String s : fondsIds){
             for (IFonds fonds : fondsenList){
-                if (s == fonds.getNaam())
+                if (s.equals(fonds.getNaam()))
                 {
                     String message = "#FND#" + fonds.getNaam() + "," + fonds.getKoers() + System.getProperty("line.separator");
                     System.out.println(message);

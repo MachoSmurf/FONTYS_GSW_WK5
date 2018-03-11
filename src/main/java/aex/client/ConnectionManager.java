@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.List;
+import java.util.*;
 
 public class ConnectionManager implements Runnable {
 
@@ -19,10 +19,12 @@ public class ConnectionManager implements Runnable {
     private Socket connectionSocket;
     private BufferedReader input;
     private PrintWriter output;
+    private TreeSet<String> fondsIndex;
     private boolean maintainConnection = true;
 
     public ConnectionManager(BannerController bannerController) {
         this.bannerController = bannerController;
+        fondsIndex = new TreeSet<>();
     }
 
     /**
@@ -65,6 +67,14 @@ public class ConnectionManager implements Runnable {
                 }catch (Exception e){
                     System.out.println("Error parsing Fonds data from server: " + e);
                 }
+                break;
+                //index of fondsen
+            case "#IDX#":
+                String[] tmp = inString.substring(5, inString.length()).split(",");
+                fondsIndex.addAll(Arrays.asList(tmp));
+                System.out.println("Beschikbare fondsen te vinden in het bestand fundsAvailable.cfg");
+                System.out.println("Pas het bestand config.cfg aan om in te stellen welke fondsen geladen moeten worden");
+                ConfigHandler.writeConfig(fondsIndex);
                 break;
         }
     }
@@ -113,12 +123,19 @@ public class ConnectionManager implements Runnable {
         try {
             String message = "#GET#";
             for (String s : fondsNamen) {
-                message = message + "," + s;
+                message = message  + s + ",";
             }
             message = message + System.getProperty("line.separator");
             sendCommand(message);
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    public void fetchSubscribedFunds() {
+        TreeSet fundsSet = ConfigHandler.readConfig();
+        ArrayList<String> fondsenToFetch = new ArrayList<>();
+        fondsenToFetch.addAll(fundsSet);
+        getFonds(fondsenToFetch);
     }
 }

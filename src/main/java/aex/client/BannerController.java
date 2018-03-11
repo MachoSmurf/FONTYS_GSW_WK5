@@ -41,12 +41,12 @@ public class BannerController {
                 updateBanner();
             }
         }, 0, 2000);
-        connectionManager.getAllFondsen();
+        connectionManager.listFondsen();
     }
 
     private void updateBanner() {
         try {
-            connectionManager.getAllFondsen();
+            connectionManager.fetchSubscribedFunds();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -56,7 +56,6 @@ public class BannerController {
     public void stop() {
         pollingTimer.cancel();
         // Stop simulation timer of effectenbeurs
-        // TODO
         banner.stop();
     }
 
@@ -75,7 +74,7 @@ public class BannerController {
                 DecimalFormat df = new DecimalFormat("##.00");
                 for (IFonds f : fondsSet) {
                     bannerText = bannerText + f.getNaam() + ": " + df.format(f.getKoers()) + " - ";
-                    System.out.println(bannerText);
+                    //System.out.println(bannerText);
                 }
                 banner.setKoersText(bannerText);
                 System.out.println(bannerText);
@@ -86,4 +85,5 @@ public class BannerController {
             banner.setKoersText("Geen koersinfo beschikbaar");
         }
     }
+
 }
