@@ -6,7 +6,7 @@ import java.util.List;
 
 public class EffectenBeurs implements IEffectenBeurs, Runnable {
     @Override
-    public List<IFonds> getKoersen() {
+    public List<Fonds> getKoersen() {
         return null;
     }
 

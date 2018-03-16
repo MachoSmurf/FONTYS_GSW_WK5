@@ -1,6 +1,7 @@
 package aex.client;
 
 import aex.common.*;
+import aex.server.Fonds;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -9,29 +10,14 @@ public class BannerController {
 
     private aex.client.AEXBanner banner;
     private Timer pollingTimer;
-    private ConnectionManager connectionManager;
     private Thread connectionThread;
+    MockEffectenBeursService beurs = new MockEffectenBeursService();
 
-    private Set<IFonds> fondsSet;
+    private List<aex.client.Fonds> fondsList;
 
     public BannerController(aex.client.AEXBanner banner) throws Exception {
 
         this.banner = banner;
-
-        fondsSet = new TreeSet<>();
-
-        connectionManager = new ConnectionManager(this);
-        try{
-            if (connectionManager.connectToServer()){
-                connectionThread = new Thread(connectionManager);
-                connectionThread.start();
-            }
-            else{
-                throw new Exception("Could not connect to server!");
-            }
-        }catch (Exception e) {
-            System.out.println("Exception stating connection: " + e);
-        }
 
         // Start polling timer: update banner every two seconds
         pollingTimer = new Timer();
@@ -41,12 +27,13 @@ public class BannerController {
                 updateBanner();
             }
         }, 0, 2000);
-        connectionManager.listFondsen();
     }
 
     private void updateBanner() {
         try {
-            connectionManager.fetchSubscribedFunds();
+            MockEffectenBeurs b = beurs.getMockEffectenBeursPort();
+            fondsList = b.koersen();
+            fondsenToText();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -59,20 +46,12 @@ public class BannerController {
         banner.stop();
     }
 
-    public void updateFonds(IFonds f) {
-        if (fondsSet.contains(f)){
-            fondsSet.remove(f);
-        }
-        fondsSet.add(f);
-        fondsenToText();
-    }
-
     private void fondsenToText() {
-        if (fondsSet != null) {
+        if (fondsList != null) {
             try {
                 String bannerText = "";
                 DecimalFormat df = new DecimalFormat("##.00");
-                for (IFonds f : fondsSet) {
+                for (aex.client.Fonds f : fondsList) {
                     bannerText = bannerText + f.getNaam() + ": " + df.format(f.getKoers()) + " - ";
                     //System.out.println(bannerText);
                 }

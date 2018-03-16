@@ -1,7 +1,9 @@
 package aex.common;
 
+import aex.server.Fonds;
+
 import java.util.List;
 
 public interface IEffectenBeurs{
-    List<IFonds> getKoersen();
+    List<Fonds> getKoersen();
 }
